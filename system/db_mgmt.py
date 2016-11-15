@@ -23,6 +23,8 @@ if __name__ == '__main__':
     database = Database()
     database.open_connection()
     database.create_database()
+    database.insert_test_hotel()
+    database.insert_test_staff()
 
     command = raw_input("db_mgmt: ").lower()
     while command != 'quit':
@@ -33,4 +35,6 @@ if __name__ == '__main__':
         command = raw_input("db_mgmt: ").lower()
     
     database.close_connection()
+    # database.delete_database()
+
     quit()

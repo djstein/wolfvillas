@@ -23,6 +23,10 @@ class Database(object):
         self.connect.close()
 
 
+    def delete_database(self):
+        os.remove('./system/system.db')
+
+
     def create_database(self):
         if self.connect is not None and self.cursor is not None:
 
@@ -132,11 +136,10 @@ class Database(object):
 
 
             self.connect.commit()
-
             print('Initial database created')
 
 
-    def load_initial_data(self):
+    def insert_test_hotel(self):
         self.cursor.execute(''' 
             INSERT INTO hotel(manager_id, name, address, phone_number) VALUES (NULL, 'Dylan Bed N Breakfast', '2 B and B Drive', '369-555-1234')
             ''')
@@ -151,13 +154,33 @@ class Database(object):
             ''')
         self.connect.commit()
 
-        # self.cursor.execute(''' 
-        #     ''')
-        # self.cursor.execute(''' 
-        #     ''')
-        # self.cursor.execute(''' 
-        #     ''')
-        # self.cursor.execute(''' 
-        #     ''')
-        # connect.commit()
+
+    def insert_test_staff(self):
+        self.cursor.execute(''' 
+           INSERT INTO staff(hotel_id, ssn, name, age, gender, job_title, department, phone_number, address) VALUES (1, '123-45-6789', 'Dylan Stein', 22, 'Male', 'CEO', 'Management', '369-555-1235', '1 Staff Lane')
+            ''')
+        self.cursor.execute(''' 
+           INSERT INTO staff(hotel_id, ssn, name, age, gender, job_title, department, phone_number, address) VALUES (2, '9876-54-321', 'Carl Hiltbrunner', 21, 'Male', 'CEO', 'Management', '123-555-9876', '2 Staff Lane')
+            ''')
+
+        self.cursor.execute('''
+            UPDATE hotel SET manager_id = 1 WHERE id = 1;
+            ''')
+        self.cursor.execute(''' 
+            UPDATE hotel SET manager_id = 2 WHERE id = 2;
+            ''')
+
+        self.cursor.execute(''' 
+            INSERT INTO staff(hotel_id, ssn, name, age, gender, job_title, department, phone_number, address) VALUES (1, '8291-37-172', 'John Doe', 51, 'Male', 'Chef', 'Catering', '246-555-3812', '3 Staff Lane')            
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO staff(hotel_id, ssn, name, age, gender, job_title, department, phone_number, address) VALUES (1, '6382-38-281', 'Jane Doe', 38, 'Female', 'Front Desk Assistant', 'Service', '357-555-9271', '3 Staff Lane')
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO staff(hotel_id, ssn, name, age, gender, job_title, department, phone_number, address) VALUES (2, '3182-58-221', 'David Smith', 12, 'Male', 'Laundry Person', 'Service', '258-555-7291', '4 Staff Lane');
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO staff(hotel_id, ssn, name, age, gender, job_title, department, phone_number, address) VALUES (2, '2381-47-182', 'Rachel Smith', 27, 'Female', 'Food Carter', 'Catering', '150-555-3281', '4 Staff Lane');
+            ''')
+        self.connect.commit()
 
