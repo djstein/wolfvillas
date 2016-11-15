@@ -23,8 +23,15 @@ if __name__ == '__main__':
     database = Database()
     database.open_connection()
     database.create_database()
+
     database.insert_test_hotel()
     database.insert_test_staff()
+    database.insert_test_customer()
+    database.insert_test_billing()
+    database.insert_test_service()
+    database.insert_test_room()
+    database.insert_test_reservation()
+    database.insert_test_service_availed()
 
     command = raw_input("db_mgmt: ").lower()
     while command != 'quit':

@@ -107,8 +107,8 @@ class Database(object):
                     hotel_id INT NOT NULL,
                     room_id INT NOT NULL,
                     current_occupancy INT NOT NULL,
-                    check_in DATE,
-                    check_out DATE,
+                    check_in DATETIME,
+                    check_out DATETIME,
                     FOREIGN KEY(customer_id) REFERENCES customer(id) ON DELETE CASCADE,
                     FOREIGN KEY(hotel_id) REFERENCES hotel(id) ON DELETE CASCADE,
                     FOREIGN KEY(room_id) REFERENCES room(id) ON DELETE CASCADE
@@ -181,6 +181,117 @@ class Database(object):
             ''')
         self.cursor.execute(''' 
             INSERT INTO staff(hotel_id, ssn, name, age, gender, job_title, department, phone_number, address) VALUES (2, '2381-47-182', 'Rachel Smith', 27, 'Female', 'Food Carter', 'Catering', '150-555-3281', '4 Staff Lane');
+            ''')
+        self.connect.commit()
+
+
+    def insert_test_customer(self):
+        self.cursor.execute(''' 
+            INSERT INTO customer(name, gender, phone_number, address, email) VALUES ('Jack Daniels', 'Male', '281-555-1739', '1 Customer Alley', 'jack@example.co')
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO customer(name, gender, phone_number, address, email) VALUES ('Chris Jenkins', 'Male', '381-555-2812', '2 Customer Alley', 'chris@example.co')
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO customer(name, gender, phone_number, address, email) VALUES ('Sally Smith', 'Female', '841-555-2181', '3 Customer Alley', 'sally@example.co')
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO customer(name, gender, phone_number, address, email) VALUES ('Molly Hamilton', 'Female', '183-555-5893', '4 Customer Alley', 'molly@example.co')
+            ''')
+        self.connect.commit()
+
+
+    def insert_test_billing(self):
+        self.cursor.execute(''' 
+            INSERT INTO billing(customer_id, ssn, billing_address, payment_method, credit_card_number) VALUES (1, '417-22-9248', '1 Customer Alley', 'Credit Card', '4916-6153-4460-3360')
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO billing(customer_id, ssn, billing_address, payment_method, credit_card_number) VALUES (2, '536-60-7072', '2 Customer Alley', 'Credit Card', '4163-8860-4333-5857')
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO billing(customer_id, ssn, billing_address, payment_method, credit_card_number) VALUES (3, '441-09-1550', '3 Customer Alley', 'Credit Card', '5419-8404-7660-0328')
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO billing(customer_id, ssn, billing_address, payment_method, credit_card_number) VALUES (4, '037-54-4135', '4 Customer Alley', 'Credit Card', '3441-777641-54242')
+            ''')
+        self.connect.commit()
+
+
+    def insert_test_service(self):
+        self.cursor.execute(''' 
+            INSERT INTO service(hotel_id, name, cost) VALUES (1, 'Breakfast in Bed', 15)
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO service(hotel_id, name, cost) VALUES (1, 'Room Service', 3)
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO service(hotel_id, name, cost) VALUES (1, 'Laundry Service', 10)
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO service(hotel_id, name, cost) VALUES (2, 'Laundry Service', 12)
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO service(hotel_id, name, cost) VALUES (2, 'Room Service', 5)
+            ''')
+        self.connect.commit()
+
+
+    def insert_test_room(self):
+        self.cursor.execute(''' 
+            INSERT INTO room(hotel_id, availability, category, max_occupancy, rate) VALUES (1, 1, 'Deluxe', 2, 75)
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO room(hotel_id, availability, category, max_occupancy, rate) VALUES (1, 1, 'Economy', 4, 100)
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO room(hotel_id, availability, category, max_occupancy, rate) VALUES (2, 1, 'Deluxe', 2, 125)
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO room(hotel_id, availability, category, max_occupancy, rate) VALUES (2, 1, 'Economy', 4, 150)
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO room(hotel_id, availability, category, max_occupancy, rate) VALUES (1, 0, 'Economy', 4, 100)
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO room(hotel_id, availability, category, max_occupancy, rate) VALUES (2, 0, 'Deluxe', 1, 75)
+            ''')
+        self.connect.commit()
+
+
+    def insert_test_reservation(self):
+        self.cursor.execute(''' 
+            INSERT INTO reservation(customer_id, hotel_id, room_id, current_occupancy, check_in, check_out) VALUES (1, 1, 1, 2, '2016-10-08 08:00', '2016-10-16 12:00')
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO reservation(customer_id, hotel_id, room_id, current_occupancy, check_in, check_out) VALUES (2, 1, 2, 4, '2016-10-19 09:00', '2016-10-22 13:00')
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO reservation(customer_id, hotel_id, room_id, current_occupancy, check_in, check_out) VALUES (3, 2, 1, 2, '2016-10-16 10:00', '2016-10-23 10:00')
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO reservation(customer_id, hotel_id, room_id, current_occupancy, check_in, check_out) VALUES (4, 2, 2, 4, '2016-10-20 08:00', '2016-10-24 04:00')
+            ''')
+        self.connect.commit()
+
+
+    def insert_test_service_availed(self):
+        self.cursor.execute(''' 
+            INSERT INTO service_availed(reservation_id, service_id, staff_id) VALUES (1, 1, 1)
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO service_availed(reservation_id, service_id, staff_id) VALUES (1, 2, 2)
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO service_availed(reservation_id, service_id, staff_id) VALUES (2, 3, 2)
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO service_availed(reservation_id, service_id, staff_id) VALUES (3, 4, 3)
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO service_availed(reservation_id, service_id, staff_id) VALUES (3, 5, 4)
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO service_availed(reservation_id, service_id, staff_id) VALUES (4, 5, 4)
             ''')
         self.connect.commit()
 
