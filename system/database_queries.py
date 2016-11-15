@@ -2,17 +2,31 @@ import os
 import sqlite3
 import sys
 
-def create_database():
-    if not os.path.isfile('./system/system.db'):
-        # try:
-            connect = sqlite3.connect('./system/system.db')
-            cursor = connect.cursor()
-            
-            # check for foreign keys
-            cursor.execute('''PRAGMA foreign_keys = ON''')
-            connect.commit()
+class Database(object):
 
-            cursor.execute('''
+    def __init__(self):
+        self.connect = None
+        self.cursor = None
+
+
+    def open_connection(self):
+        if not os.path.isfile('./system/system.db'):
+            self.connect = sqlite3.connect('./system/system.db')
+            self.cursor = self.connect.cursor()
+
+            # Check for foreign keys
+            self.cursor.execute('''PRAGMA foreign_keys = ON''')
+            self.connect.commit()
+
+
+    def close_connection(self):
+        self.connect.close()
+
+
+    def create_database(self):
+        if self.connect is not None and self.cursor is not None:
+
+            self.cursor.execute('''
                 CREATE TABLE customer (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name NVARCHAR2(128) NOT NULL,
@@ -22,7 +36,7 @@ def create_database():
                     email NVARCHAR2(256) NOT NULL
                 )''')
 
-            cursor.execute('''
+            self.cursor.execute('''
                 CREATE TABLE billing (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     customer_id NOT NULL,
@@ -33,7 +47,7 @@ def create_database():
                     FOREIGN KEY(customer_id) REFERENCES customer(id) ON DELETE CASCADE
                 )''')
 
-            cursor.execute('''
+            self.cursor.execute('''
                 CREATE TABLE hotel (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     manager_id INT,
@@ -42,7 +56,7 @@ def create_database():
                     phone_number NVARCHAR2(32) NOT NULL
                 )''')
 
-            cursor.execute('''
+            self.cursor.execute('''
                 CREATE TABLE staff (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     hotel_id INT NOT NULL,
@@ -57,11 +71,11 @@ def create_database():
                     FOREIGN KEY(hotel_id) REFERENCES hotel(id) ON DELETE CASCADE
                 )''')
 
-            cursor.execute('''
+            self.cursor.execute('''
                 DROP TABLE hotel
                 ''')
             
-            cursor.execute('''
+            self.cursor.execute('''
                 CREATE TABLE hotel (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     manager_id INT,
@@ -71,7 +85,7 @@ def create_database():
                     FOREIGN KEY(manager_id) REFERENCES staff(id) ON DELETE CASCADE
                 )''')
 
-            cursor.execute('''
+            self.cursor.execute('''
                 CREATE TABLE room (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     hotel_id INT NOT NULL,
@@ -82,7 +96,7 @@ def create_database():
                     FOREIGN KEY(hotel_id) REFERENCES hotel(id) ON DELETE CASCADE
                 )''')
 
-            cursor.execute('''
+            self.cursor.execute('''
                 CREATE TABLE reservation (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     customer_id INT NOT NULL,
@@ -96,7 +110,7 @@ def create_database():
                     FOREIGN KEY(room_id) REFERENCES room(id) ON DELETE CASCADE
                 )''')
             
-            cursor.execute('''
+            self.cursor.execute('''
                 CREATE TABLE service (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     hotel_id INT NOT NULL,
@@ -105,7 +119,7 @@ def create_database():
                     FOREIGN KEY(hotel_id) REFERENCES hotel(id) ON DELETE CASCADE
                 )''')
             
-            cursor.execute('''
+            self.cursor.execute('''
                 CREATE TABLE service_availed (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     reservation_id INT NOT NULL,
@@ -117,24 +131,33 @@ def create_database():
                 )''')
 
 
-            connect.commit()
+            self.connect.commit()
 
             print('Initial database created')
-            load_initial_data(connect, cursor)
-            connect.close()
-
-            # os.remove('./system/system.db')
-            # print('Initial database killed')
-
-        # except:
-            # print(sys.exc_info()[0])
-            # os.remove('./system/system.db')
-            # print('Creation error')
 
 
-def load_initial_data(connect, cursor):
-    cursor.execute(''' 
-        INSERT INTO hotel(manager_id, name, address, phone_number) VALUES (NULL, 'Dylan Bed N Breakfast', '2 B and B Drive', '369-555-1234')
-        ''')
-    connect.commit()
+    def load_initial_data(self):
+        self.cursor.execute(''' 
+            INSERT INTO hotel(manager_id, name, address, phone_number) VALUES (NULL, 'Dylan Bed N Breakfast', '2 B and B Drive', '369-555-1234')
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO hotel(manager_id, name, address, phone_number) VALUES (NULL, 'Royal Suites by Carl', '1 Hotel Street', '123-555-6789')
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO hotel(manager_id, name, address, phone_number) VALUES (NULL, 'ABANDONED HOTEL 3', '3 Hotel Street', '391-555-2713')
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO hotel(manager_id, name, address, phone_number) VALUES (NULL, 'ABANDONED HOTEL 2', '4 Hotel Street', '892-555-4782')
+            ''')
+        self.connect.commit()
+
+        # self.cursor.execute(''' 
+        #     ''')
+        # self.cursor.execute(''' 
+        #     ''')
+        # self.cursor.execute(''' 
+        #     ''')
+        # self.cursor.execute(''' 
+        #     ''')
+        # connect.commit()
 
