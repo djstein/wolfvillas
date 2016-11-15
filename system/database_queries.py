@@ -10,13 +10,12 @@ class Database(object):
 
 
     def open_connection(self):
-        if not os.path.isfile('./system/system.db'):
-            self.connect = sqlite3.connect('./system/system.db')
-            self.cursor = self.connect.cursor()
+        self.connect = sqlite3.connect('./system/system.db')
+        self.cursor = self.connect.cursor()
 
-            # Check for foreign keys
-            self.cursor.execute('''PRAGMA foreign_keys = ON''')
-            self.connect.commit()
+        # Check for foreign keys
+        self.cursor.execute('''PRAGMA foreign_keys = ON''')
+        self.connect.commit()
 
 
     def close_connection(self):
@@ -26,12 +25,63 @@ class Database(object):
     def delete_database(self):
         os.remove('./system/system.db')
 
+    
+    def delete_all_rows(self):
+        if self.connect is not None and self.cursor is not None:
+            self.cursor.execute('''DELETE FROM  hotel''')
+            self.cursor.execute('''DELETE FROM  room''')
+            self.cursor.execute('''DELETE FROM  service''')
+            self.cursor.execute('''DELETE FROM  staff''')
+            self.cursor.execute('''DELETE FROM  service_availed''')
+            self.cursor.execute('''DELETE FROM  billing''')
+            self.cursor.execute('''DELETE FROM  customer''')
+            self.cursor.execute('''DELETE FROM  reservation''')
+            self.connect.commit()
 
-    def create_database(self):
+
+    def drop_tables(self):
+        if self.connect is not None and self.cursor is not None:
+            # try:
+                self.cursor.execute('''
+                    DROP TABLE IF EXISTS room
+                    ''')
+                self.connect.commit()
+                
+                self.cursor.execute('''
+                    DROP TABLE IF EXISTS hotel
+                    ''')
+                self.connect.commit()
+
+                # self.cursor.execute('''
+                #     DROP TABLE IF EXISTS service
+                #     ''')
+
+                # self.cursor.execute('''
+                #     DROP TABLE IF EXISTS staff
+                #     ''')
+
+                # self.cursor.execute('''
+                #     DROP TABLE IF EXISTS service_availed
+                #     ''')
+                # self.cursor.execute('''
+                #     DROP TABLE IF EXISTS billing
+                #     ''')
+                # self.cursor.execute('''
+                #     DROP TABLE IF EXISTS customer
+                #     ''')
+                # self.cursor.execute('''
+                #     DROP TABLE IF EXISTS reservation
+                #     ''')
+
+            # except sqlite3.OperationalError:
+            #     self.connect.rollback()
+
+
+    def create_tables(self):
         if self.connect is not None and self.cursor is not None:
 
             self.cursor.execute('''
-                CREATE TABLE customer (
+                CREATE TABLE IF NOT EXISTS customer (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name NVARCHAR2(128) NOT NULL,
                     gender NVARCHAR2(8) NOT NULL,
@@ -41,7 +91,7 @@ class Database(object):
                 )''')
 
             self.cursor.execute('''
-                CREATE TABLE billing (
+                CREATE TABLE IF NOT EXISTS billing (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     customer_id NOT NULL,
                     ssn NVARCHAR2(11) NOT NULL,
@@ -52,7 +102,7 @@ class Database(object):
                 )''')
 
             self.cursor.execute('''
-                CREATE TABLE hotel (
+                CREATE TABLE IF NOT EXISTS hotel (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     manager_id INT,
                     name NVARCHAR2(32) NOT NULL,
@@ -61,7 +111,7 @@ class Database(object):
                 )''')
 
             self.cursor.execute('''
-                CREATE TABLE staff (
+                CREATE TABLE IF NOT EXISTS staff (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     hotel_id INT NOT NULL,
                     ssn NVARCHAR2(11) NOT NULL,
@@ -80,7 +130,7 @@ class Database(object):
                 ''')
             
             self.cursor.execute('''
-                CREATE TABLE hotel (
+                CREATE TABLE IF NOT EXISTS hotel (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     manager_id INT,
                     name NVARCHAR2(32) NOT NULL,
@@ -90,7 +140,7 @@ class Database(object):
                 )''')
 
             self.cursor.execute('''
-                CREATE TABLE room (
+                CREATE TABLE IF NOT EXISTS room (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     hotel_id INT NOT NULL,
                     availability NUMBER(1) DEFAULT 0 NOT NULL,
@@ -101,7 +151,7 @@ class Database(object):
                 )''')
 
             self.cursor.execute('''
-                CREATE TABLE reservation (
+                CREATE TABLE IF NOT EXISTS reservation (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     customer_id INT NOT NULL,
                     hotel_id INT NOT NULL,
@@ -115,7 +165,7 @@ class Database(object):
                 )''')
             
             self.cursor.execute('''
-                CREATE TABLE service (
+                CREATE TABLE IF NOT EXISTS service (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     hotel_id INT NOT NULL,
                     name NVARCHAR2(32) NOT NULL,
@@ -124,7 +174,7 @@ class Database(object):
                 )''')
             
             self.cursor.execute('''
-                CREATE TABLE service_availed (
+                CREATE TABLE IF NOT EXISTS service_availed (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     reservation_id INT NOT NULL,
                     service_id INT NOT NULL,
@@ -134,9 +184,7 @@ class Database(object):
                     FOREIGN KEY(staff_id) REFERENCES staff(id) ON DELETE CASCADE
                 )''')
 
-
             self.connect.commit()
-            print('Initial database created')
 
 
     def insert_test_hotel(self):
