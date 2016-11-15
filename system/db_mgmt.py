@@ -1,6 +1,6 @@
 import os
 import sys
-from create_database import create_database
+from database_queries import create_database
 
 def commands():
     print(
