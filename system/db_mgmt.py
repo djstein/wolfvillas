@@ -7,9 +7,18 @@ def commands():
         """WolfVillas Database Management System
     Version: 1.0.0
     Commands:
-        quit: end the current session
-        help: prompt the commands"""
+        help: prompt the commands
+        quit: end the current session"""
     )
+
+
+def user_commands():
+    command = raw_input("db_mgmt: ").lower()
+    while command != 'quit':
+        if command == 'help':
+            commands()
+        command = raw_input("db_mgmt: ").lower()
+    quit()
 
 
 def quit():
@@ -19,4 +28,4 @@ def quit():
 if __name__ == '__main__':
     commands()
     create_database()
-    quit()
+    user_commands()
