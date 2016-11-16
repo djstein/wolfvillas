@@ -25,57 +25,91 @@ class Database(object):
     def delete_database(self):
         os.remove('./system/system.db')
 
-    
-    def delete_all_rows(self):
-        if self.connect is not None and self.cursor is not None:
-            self.cursor.execute('''DELETE FROM  hotel''')
-            self.cursor.execute('''DELETE FROM  room''')
-            self.cursor.execute('''DELETE FROM  service''')
-            self.cursor.execute('''DELETE FROM  staff''')
-            self.cursor.execute('''DELETE FROM  service_availed''')
-            self.cursor.execute('''DELETE FROM  billing''')
-            self.cursor.execute('''DELETE FROM  customer''')
-            self.cursor.execute('''DELETE FROM  reservation''')
-            self.connect.commit()
+#########################################################
+
+    def display_customers(self):
+        # TODO: return customers
+        print('customers')
 
 
-    def drop_tables(self):
-        if self.connect is not None and self.cursor is not None:
-            # try:
-                self.cursor.execute('''
-                    DROP TABLE IF EXISTS room
-                    ''')
-                self.connect.commit()
-                
-                self.cursor.execute('''
-                    DROP TABLE IF EXISTS hotel
-                    ''')
-                self.connect.commit()
+    def create_customers(self):
+        # TODO: create customer
+        print('create customers')
 
-                # self.cursor.execute('''
-                #     DROP TABLE IF EXISTS service
-                #     ''')
 
-                # self.cursor.execute('''
-                #     DROP TABLE IF EXISTS staff
-                #     ''')
+    def update_customer(self, customer_id):
+        # TODO: update customer
+        print('update customers')
 
-                # self.cursor.execute('''
-                #     DROP TABLE IF EXISTS service_availed
-                #     ''')
-                # self.cursor.execute('''
-                #     DROP TABLE IF EXISTS billing
-                #     ''')
-                # self.cursor.execute('''
-                #     DROP TABLE IF EXISTS customer
-                #     ''')
-                # self.cursor.execute('''
-                #     DROP TABLE IF EXISTS reservation
-                #     ''')
 
-            # except sqlite3.OperationalError:
-            #     self.connect.rollback()
+    def delete_customer(self, customer_id):
+        # TODO: delete customer
+        print('delete customers')
 
+#########################################################
+
+    def display_staff(self):
+        # TODO: return staff
+        print('statff')
+
+
+    def create_staff(self):
+        # TODO: create staff
+        print('create staff')
+
+
+    def update_staff(self, staff_id):
+        # TODO: update staff
+        print('update staff')
+
+
+    def delete_staff(self, staff_id):
+        # TODO: delete staff
+        print('delete staff')
+
+#########################################################
+
+    def display_reservation(self):
+        # TODO: return reservations
+        print('reservation')
+
+
+    def create_reservation(self):
+        # TODO: create reservation
+        print('create reservation')
+
+
+    def update_reservation(self, reservation_id):
+        # TODO: update reservation
+        print('update reservation')
+
+
+    def delete_reservation(self, reservation_id):
+        # TODO: delete reservation
+        print('delete reservation')
+
+#########################################################
+
+    def display_service_avail(self):
+        # TODO: return service_avail
+        print('service_avail')
+
+
+    def create_service_avail(self):
+        # TODO: create service_avail
+        print('create service_avail')
+
+
+    def update_service_avail(self, service_avail_id):
+        # TODO: update service_avail
+        print('update service_avail')
+
+
+    def delete_service_avail(self, service_avail_id):
+        # TODO: delete service_avail
+        print('delete service_avail')
+
+#########################################################
 
     def create_tables(self):
         if self.connect is not None and self.cursor is not None:
