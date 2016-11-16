@@ -115,7 +115,7 @@ if __name__ == '__main__':
     command = raw_input("db_mgmt: ").lower()
     while command != 'quit':
         if command == 'display hotels':
-            display_hotels(database)
+            database.display_hotels()
         elif command == 'hotel 1':
             hotel(database, command)
         elif command == 'help':

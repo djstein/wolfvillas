@@ -25,6 +25,11 @@ class Database(object):
     def delete_database(self):
         os.remove('./system/system.db')
 
+
+    def display_hotels(self):
+        # TODO: return hotels
+        print('hotels')
+
 #########################################################
 
     def display_customers(self):
