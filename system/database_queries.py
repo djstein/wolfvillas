@@ -1,6 +1,5 @@
 import os
 import sqlite3
-import sys
 
 class Database(object):
 
@@ -25,100 +24,216 @@ class Database(object):
     def delete_database(self):
         os.remove('./system/system.db')
 
+#########################################################
 
     def display_hotels(self):
-        # TODO: return hotels
-        print('hotels')
+        self.cursor.execute('SELECT * FROM hotel;')
+        results = self.cursor.fetchall()
+        print 'Hotel ID, Manager ID, Name, Address, Phone Number'
+        for result in results:
+            print '{0}, {1}, {2}, {3}, {4}'.format(result[0], result[1], result[2], result[3], result[4])
 
 #########################################################
 
     def display_customers(self):
-        # TODO: return customers
-        print('customers')
+        self.cursor.execute('SELECT * FROM customer;')
+        results = self.cursor.fetchall()
+        for result in results:
+            print '{0}, {1}, {2}, {3}, {4}'.format(result[0], result[1], result[2], result[3], result[4])
 
 
-    def create_customers(self):
-        # TODO: create customer
-        print('create customers')
+    def create_customer(self, name, gender, phone_number, address, email):
+        self.cursor.execute('''
+            INSERT INTO customer(name, gender, phone_number, address, email) 
+            VALUES ('{0}', '{1}', '{2}', '{3}', '{4}');'''.format(
+                name, gender, phone_number, address, email));
+        self.connect.commit()
 
 
-    def update_customer(self, customer_id):
-        # TODO: update customer
-        print('update customers')
+    def update_customer(self, customer_id, name, gender, phone_number, address, email):
+        self.cursor.execute('''
+            UPDATE customer SET name='{0}', gender='{1}', phone_number='{2}', address='{3}', email='{4}'
+                            WHERE id={5};'''.format(
+                name, gender, phone_number, address, email, customer_id));
+        self.connect.commit()
 
 
     def delete_customer(self, customer_id):
-        # TODO: delete customer
-        print('delete customers')
+        self.cursor.execute('''
+            DELETE FROM customer WHERE id={0};'''.format(customer_id))
+        self.connect.commit()
 
 #########################################################
 
     def display_staff(self):
-        # TODO: return staff
-        print('statff')
+        self.cursor.execute('SELECT * FROM staff;')
+        results = self.cursor.fetchall()
+        for result in results:
+                print '{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}'.format(result[0], result[1], result[2], result[3],
+                                                          result[4], result[5], result[6], result[7], result[8], result[9])
 
 
-    def create_staff(self):
-        # TODO: create staff
-        print('create staff')
+    def create_staff(self, hotel_id, ssn, name, age, gender, job_title, department, phone_number, address):
+        self.cursor.execute('''
+            INSERT INTO staff(hotel_id, ssn, name, age, gender, job_title,
+                              department, phone_number, address) 
+            VALUES ({0}, '{1}', '{2}', {3}, '{4}', '{5}', '{6}', '{7}', '{8}');'''.format(
+                hotel_id, ssn, name, age, gender,
+                job_title, department, phone_number, address));
+        self.connect.commit()
 
 
-    def update_staff(self, staff_id):
-        # TODO: update staff
-        print('update staff')
+    def update_staff(self, staff_id, hotel_id, ssn, name, age, gender, job_title, department, phone_number, address):
+        self.cursor.execute('''
+            UPDATE staff SET hotel_id={0}, ssn='{1}', name='{2}', age={3}, gender='{4}',
+                             job_title='{5}', department='{6}', phone_number='{7}', address='{8}' 
+                         WHERE id={9}'''.format( hotel_id, ssn, name, age, gender, job_title,
+                                                 department, phone_number, address, staff_id));
+        self.connect.commit()
 
 
     def delete_staff(self, staff_id):
-        # TODO: delete staff
-        print('delete staff')
+        self.cursor.execute('''
+            DELETE FROM staff WHERE id={0};'''.format(staff_id))
+        self.connect.commit()
+
+    #########################################################
+
+    def display_rooms(self):
+        self.cursor.execute('SELECT * FROM room;')
+        results = self.cursor.fetchall()
+        for result in results:
+            print '{0}, {1}, {2}, {3}, {4}, {5}'.format(
+                    result[0], result[1], result[2], result[3], result[4], result[5])
+
+
+    def display_available_rooms(self):
+        self.cursor.execute('SELECT * FROM room WHERE availability = 1;')
+        results = self.cursor.fetchall()
+        for result in results:
+            print '{0}, {1}, {2}, {3}, {4}, {5}'.format(
+                    result[0], result[1], result[2], result[3], result[4], result[5])
+
+    
+    def release_room(self, room_number):
+        self.cursor.execute('UPDATE room SET availability = 1 WHERE id={0};'.format(room_number))
+        self.connect.commit()
+
+
+
+    def create_room(self, room_number, hotel_id, availability, category, max_occupancy, rate):
+        self.cursor.execute('''
+            INSERT INTO room(room_number, hotel_id, availability, category, max_occupancy, rate) 
+            VALUES({0}, {1}, {2}, '{3}', {4}, {5});'''.format(
+                room_number, hotel_id, availability, category, max_occupancy, rate))
+        self.connect.commit()
+
+
+    def update_room(self, room_number, hotel_id, availability, category, max_occupancy, rate):
+        self.cursor.execute('''
+            UPDATE room SET id={0}, hotel_id={1}, availability={2},
+                            category='{3}', max_occupancy={4}, rate={5}
+                            WHERE id={6}'''.format(room_number, hotel_id, availability,
+                                                   category, max_occupancy, rate, room_number))
+        self.connect.commit()
+
+
+    def delete_room(self, room_number):
+        self.cursor.execute('''
+            DELETE FROM room WHERE id={0};'''.format(room_number))
+        self.connect.commit()
 
 #########################################################
 
-    def display_reservation(self):
-        # TODO: return reservations
-        print('reservation')
+    def display_reservations(self):
+        self.cursor.execute('SELECT * FROM reservation;')
+        results = self.cursor.fetchall()
+        for result in results:
+            print '{0}, {1}, {2}, {3}, {4}, {5}, {6}'.format(result[0], result[1], result[2], result[3], result[4], result[5], result[6])
 
 
-    def create_reservation(self):
-        # TODO: create reservation
-        print('create reservation')
+    def create_reservation(self, customer_id, hotel_id, room_id, current_occupancy,
+                           check_in, check_out):
+        self.cursor.execute('''
+                INSERT INTO reservation(customer_id, hotel_id, room_id,
+                                        current_occupancy, check_in, check_out)
+                VALUES ({0}, {1}, {2}, {3}, '{4}', '{5}');
+            '''.format(customer_id, hotel_id, room_id, current_occupancy, check_in, check_out))
+        self.connect.commit()
 
 
-    def update_reservation(self, reservation_id):
-        # TODO: update reservation
-        print('update reservation')
+    def update_reservation(self, reservation_id, room_id, current_occupancy, check_in, check_out):
+        self.cursor.execute('''
+                UPDATE reservation SET room_id={0}, current_occupancy={1}, check_in='{2}', check_out='{3}'
+                WHERE id={4};
+            '''.format(room_id, current_occupancy, check_in, check_out, reservation_id))
+        self.connect.commit()
 
 
     def delete_reservation(self, reservation_id):
-        # TODO: delete reservation
-        print('delete reservation')
+        self.cursor.execute('DELETE FROM reservation WHERE id={0};'.format(reservation_id))
+        self.connect.commit()
 
 #########################################################
 
-    def display_service_avail(self):
-        # TODO: return service_avail
-        print('service_avail')
+    def display_services(self):
+        self.cursor.execute('SELECT * FROM service;')
+        results = self.cursor.fetchall()
+        for result in results:
+            print '{0}, {1}, {2}, {3}'.format(result[0], result[1], result[2], result[3]) 
 
 
-    def create_service_avail(self):
-        # TODO: create service_avail
-        print('create service_avail')
+    def create_service(self, hotel_id, name, cost):
+        self.cursor.execute('''
+            INSERT INTO service(hotel_id, name, cost)
+            VALUES({0}, '{1}', {2});'''.format(hotel_id, name, cost))
+        self.connect.commit()
 
 
-    def update_service_avail(self, service_avail_id):
-        # TODO: update service_avail
-        print('update service_avail')
+    def update_service(self, service_id, hotel_id, name, cost):
+        self.cursor.execute('''
+            UPDATE service SET hotel_id={0}, name='{1}', cost={2}
+                           WHERE id={3};'''.format(hotel_id, name, cost, service_id))
+        self.connect.commit()
 
 
-    def delete_service_avail(self, service_avail_id):
-        # TODO: delete service_avail
-        print('delete service_avail')
+    def delete_service(self, service_id):
+        self.cursor.execute('''
+            DELETE FROM service WHERE id={0};'''.format(service_id))
+        self.connect.commit()
+
+#########################################################
+
+    def display_services_availed(self):
+        self.cursor.execute('SELECT * FROM service_availed;')
+        results = self.cursor.fetchall()
+        for result in results:
+            print '{0}, {1}, {2}, {3}'.format(result[0], result[1], result[2], result[3]) 
+
+
+    def create_service_availed(self, reservation_id, service_id, staff_id):
+        self.cursor.execute('''
+            INSERT INTO service_availed(reservation_id, service_id, staff_id)
+            VALUES({0}, {1}, {2});'''.format(reservation_id, service_id, staff_id))
+        self.connect.commit()
+
+
+    def update_service_availed(self, service_availed_id, reservation_id, service_id, staff_id):
+        self.cursor.execute('''
+            UPDATE service_availed SET reservation_id={0}, service_id={1}, staff_id={2}
+            WHERE id={3};'''.format(reservation_id, service_id, staff_id, service_availed_id))
+        self.connect.commit()
+
+
+    def delete_service_availed(self, service_availed_id):
+        self.cursor.execute('''
+            DELETE FROM service_availed WHERE id={0};'''.format(service_availed_id))
+        self.connect.commit()
 
 #########################################################
 
     def create_tables(self):
-        if self.connect is not None and self.cursor is not None:
-
+        if self.connect and self.cursor:
             self.cursor.execute('''
                 CREATE TABLE IF NOT EXISTS customer (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -127,7 +242,7 @@ class Database(object):
                     phone_number NVARCHAR2(32) NOT NULL,
                     address NVARCHAR2(512) NOT NULL,
                     email NVARCHAR2(256) NOT NULL
-                )''')
+                );''')
 
             self.cursor.execute('''
                 CREATE TABLE IF NOT EXISTS billing (
@@ -138,7 +253,7 @@ class Database(object):
                     payment_method NVARCHAR2(32) NOT NULL,
                     credit_card_number NVARCHAR2(19) NOT NULL,
                     FOREIGN KEY(customer_id) REFERENCES customer(id) ON DELETE CASCADE
-                )''')
+                );''')
 
             self.cursor.execute('''
                 CREATE TABLE IF NOT EXISTS hotel (
@@ -147,7 +262,7 @@ class Database(object):
                     name NVARCHAR2(32) NOT NULL,
                     address NVARCHAR2(512) NOT NULL,
                     phone_number NVARCHAR2(32) NOT NULL
-                )''')
+                );''')
 
             self.cursor.execute('''
                 CREATE TABLE IF NOT EXISTS staff (
@@ -162,11 +277,9 @@ class Database(object):
                     phone_number NVARCHAR2(32) NOT NULL,
                     address NVARCHAR2(512) NOT NULL,
                     FOREIGN KEY(hotel_id) REFERENCES hotel(id) ON DELETE CASCADE
-                )''')
+                );''')
 
-            self.cursor.execute('''
-                DROP TABLE hotel
-                ''')
+            self.cursor.execute('DROP TABLE IF EXISTS hotel;')
             
             self.cursor.execute('''
                 CREATE TABLE IF NOT EXISTS hotel (
@@ -176,7 +289,7 @@ class Database(object):
                     address NVARCHAR2(512) NOT NULL,
                     phone_number NVARCHAR2(32) NOT NULL,
                     FOREIGN KEY(manager_id) REFERENCES staff(id) ON DELETE CASCADE
-                )''')
+                );''')
 
             self.cursor.execute('''
                 CREATE TABLE IF NOT EXISTS room (
@@ -187,7 +300,7 @@ class Database(object):
                     max_occupancy INT NOT NULL,
                     rate INT NOT NULL,
                     FOREIGN KEY(hotel_id) REFERENCES hotel(id) ON DELETE CASCADE
-                )''')
+                );''')
 
             self.cursor.execute('''
                 CREATE TABLE IF NOT EXISTS reservation (
@@ -201,7 +314,7 @@ class Database(object):
                     FOREIGN KEY(customer_id) REFERENCES customer(id) ON DELETE CASCADE,
                     FOREIGN KEY(hotel_id) REFERENCES hotel(id) ON DELETE CASCADE,
                     FOREIGN KEY(room_id) REFERENCES room(id) ON DELETE CASCADE
-                )''')
+                );''')
             
             self.cursor.execute('''
                 CREATE TABLE IF NOT EXISTS service (
@@ -210,7 +323,7 @@ class Database(object):
                     name NVARCHAR2(32) NOT NULL,
                     cost INT NOT NULL,
                     FOREIGN KEY(hotel_id) REFERENCES hotel(id) ON DELETE CASCADE
-                )''')
+                );''')
             
             self.cursor.execute('''
                 CREATE TABLE IF NOT EXISTS service_availed (
@@ -221,164 +334,145 @@ class Database(object):
                     FOREIGN KEY(reservation_id) REFERENCES reservation(id) ON DELETE CASCADE,
                     FOREIGN KEY(service_id) REFERENCES service(id) ON DELETE CASCADE,
                     FOREIGN KEY(staff_id) REFERENCES staff(id) ON DELETE CASCADE
-                )''')
+                );''')
 
             self.connect.commit()
 
 
     def insert_test_hotel(self):
         self.cursor.execute(''' 
-            INSERT INTO hotel(manager_id, name, address, phone_number) VALUES (NULL, 'Dylan Bed N Breakfast', '2 B and B Drive', '369-555-1234')
+            INSERT INTO hotel(manager_id, name, address, phone_number)
+            VALUES (NULL, 'WolfVilla', '27 Timber Dr, Garner, NC 27529', '976-728-1980');
             ''')
-        self.cursor.execute(''' 
-            INSERT INTO hotel(manager_id, name, address, phone_number) VALUES (NULL, 'Royal Suites by Carl', '1 Hotel Street', '123-555-6789')
-            ''')
-        self.cursor.execute(''' 
-            INSERT INTO hotel(manager_id, name, address, phone_number) VALUES (NULL, 'ABANDONED HOTEL 3', '3 Hotel Street', '391-555-2713')
-            ''')
-        self.cursor.execute(''' 
-            INSERT INTO hotel(manager_id, name, address, phone_number) VALUES (NULL, 'ABANDONED HOTEL 2', '4 Hotel Street', '892-555-4782')
-            ''')
+
         self.connect.commit()
 
 
     def insert_test_staff(self):
         self.cursor.execute(''' 
-           INSERT INTO staff(hotel_id, ssn, name, age, gender, job_title, department, phone_number, address) VALUES (1, '123-45-6789', 'Dylan Stein', 22, 'Male', 'CEO', 'Management', '369-555-1235', '1 Staff Lane')
-            ''')
-        self.cursor.execute(''' 
-           INSERT INTO staff(hotel_id, ssn, name, age, gender, job_title, department, phone_number, address) VALUES (2, '9876-54-321', 'Carl Hiltbrunner', 21, 'Male', 'CEO', 'Management', '123-555-9876', '2 Staff Lane')
-            ''')
-
-        self.cursor.execute('''
-            UPDATE hotel SET manager_id = 1 WHERE id = 1;
-            ''')
-        self.cursor.execute(''' 
-            UPDATE hotel SET manager_id = 2 WHERE id = 2;
+           INSERT INTO staff(hotel_id, ssn, name, age, gender, job_title, department, phone_number, address)
+           VALUES (1, '409-02-1234', 'David D. Clukey', 40, 'Male', 'Front Desk representative', 'Administration', '980-131-1238', '106, Cloverdale Ct, Raleigh, NC, 27607');
             ''')
 
         self.cursor.execute(''' 
-            INSERT INTO staff(hotel_id, ssn, name, age, gender, job_title, department, phone_number, address) VALUES (1, '8291-37-172', 'John Doe', 51, 'Male', 'Chef', 'Catering', '246-555-3812', '3 Staff Lane')            
+            INSERT INTO staff(hotel_id, ssn, name, age, gender, job_title, department, phone_number, address)
+            VALUES (1, '143-22-9089', 'James M Gooden', 25, 'Male', 'Catering Staff', 'Catering', '980-187-1983', '109, Cloverdale Ct, Raleigh, NC, 27607');
             ''')
+        
         self.cursor.execute(''' 
-            INSERT INTO staff(hotel_id, ssn, name, age, gender, job_title, department, phone_number, address) VALUES (1, '6382-38-281', 'Jane Doe', 38, 'Female', 'Front Desk Assistant', 'Service', '357-555-9271', '3 Staff Lane')
+            INSERT INTO staff(hotel_id, ssn, name, age, gender, job_title, department, phone_number, address)
+            VALUES (1, '479-50-0120', 'Jasper N. Daniel', 167, 'Male', 'Cleaning Staff', 'Cleaning', '202-555-0110', '182 Lynchburg Highway, Lynchburg, TN, 37352');
             ''')
+
         self.cursor.execute(''' 
-            INSERT INTO staff(hotel_id, ssn, name, age, gender, job_title, department, phone_number, address) VALUES (2, '3182-58-221', 'David Smith', 12, 'Male', 'Laundry Person', 'Service', '258-555-7291', '4 Staff Lane');
+            INSERT INTO staff(hotel_id, ssn, name, age, gender, job_title, department, phone_number, address)
+            VALUES (1, '132-67-4793', 'Todd C. Chen', 48, 'Male', 'Manager', 'Administration', '976-728-1980', '1048, Avent Ferry Road, Raleigh, NC, 27606');
             ''')
-        self.cursor.execute(''' 
-            INSERT INTO staff(hotel_id, ssn, name, age, gender, job_title, department, phone_number, address) VALUES (2, '2381-47-182', 'Rachel Smith', 27, 'Female', 'Food Carter', 'Catering', '150-555-3281', '4 Staff Lane');
-            ''')
+
+        self.cursor.execute("UPDATE hotel SET manager_id = 3 WHERE name = 'WolfVilla';")
+
         self.connect.commit()
 
 
     def insert_test_customer(self):
         self.cursor.execute(''' 
-            INSERT INTO customer(name, gender, phone_number, address, email) VALUES ('Jack Daniels', 'Male', '281-555-1739', '1 Customer Alley', 'jack@example.co')
-            ''')
+            INSERT INTO customer(name, gender, phone_number, address, email)
+            VALUES ('Carl T. Ashcraft', 'Male', '701-555-0143', '881 Java Lane, Graniteville, SC 29829', 'carlashcraft@kmail.us')
+            ''');
         self.cursor.execute(''' 
-            INSERT INTO customer(name, gender, phone_number, address, email) VALUES ('Chris Jenkins', 'Male', '381-555-2812', '2 Customer Alley', 'chris@example.co')
+            INSERT INTO customer(name, gender, phone_number, address, email)
+            VALUES ('Angela J. Roberts', 'Female', '202-555-0118', '2697 Stroop Hill Road, Atlanta, GA 30342', 'angelaroberts@kmail.us');
             ''')
-        self.cursor.execute(''' 
-            INSERT INTO customer(name, gender, phone_number, address, email) VALUES ('Sally Smith', 'Female', '841-555-2181', '3 Customer Alley', 'sally@example.co')
-            ''')
-        self.cursor.execute(''' 
-            INSERT INTO customer(name, gender, phone_number, address, email) VALUES ('Molly Hamilton', 'Female', '183-555-5893', '4 Customer Alley', 'molly@example.co')
-            ''')
+
         self.connect.commit()
 
 
     def insert_test_billing(self):
         self.cursor.execute(''' 
-            INSERT INTO billing(customer_id, ssn, billing_address, payment_method, credit_card_number) VALUES (1, '417-22-9248', '1 Customer Alley', 'Credit Card', '4916-6153-4460-3360')
+            INSERT INTO billing(customer_id, ssn, billing_address, payment_method, credit_card_number)
+            VALUES (1, '144-54-9090', '881 Java Lane, Graniteville, SC 29829', 'Credit Card', '5184-9505-0558-9328');
             ''')
         self.cursor.execute(''' 
-            INSERT INTO billing(customer_id, ssn, billing_address, payment_method, credit_card_number) VALUES (2, '536-60-7072', '2 Customer Alley', 'Credit Card', '4163-8860-4333-5857')
+            INSERT INTO billing(customer_id, ssn, billing_address, payment_method, credit_card_number)
+            VALUES (2, '678-90-0900', '2697 Stroop Hill Road, Atlanta, GA 30342', 'Credit Card', '5196-5914-3238-5020');
             ''')
-        self.cursor.execute(''' 
-            INSERT INTO billing(customer_id, ssn, billing_address, payment_method, credit_card_number) VALUES (3, '441-09-1550', '3 Customer Alley', 'Credit Card', '5419-8404-7660-0328')
-            ''')
-        self.cursor.execute(''' 
-            INSERT INTO billing(customer_id, ssn, billing_address, payment_method, credit_card_number) VALUES (4, '037-54-4135', '4 Customer Alley', 'Credit Card', '3441-777641-54242')
-            ''')
-        self.connect.commit()
 
-
-    def insert_test_service(self):
-        self.cursor.execute(''' 
-            INSERT INTO service(hotel_id, name, cost) VALUES (1, 'Breakfast in Bed', 15)
-            ''')
-        self.cursor.execute(''' 
-            INSERT INTO service(hotel_id, name, cost) VALUES (1, 'Room Service', 3)
-            ''')
-        self.cursor.execute(''' 
-            INSERT INTO service(hotel_id, name, cost) VALUES (1, 'Laundry Service', 10)
-            ''')
-        self.cursor.execute(''' 
-            INSERT INTO service(hotel_id, name, cost) VALUES (2, 'Laundry Service', 12)
-            ''')
-        self.cursor.execute(''' 
-            INSERT INTO service(hotel_id, name, cost) VALUES (2, 'Room Service', 5)
-            ''')
         self.connect.commit()
 
 
     def insert_test_room(self):
-        self.cursor.execute(''' 
-            INSERT INTO room(hotel_id, availability, category, max_occupancy, rate) VALUES (1, 1, 'Deluxe', 2, 75)
+        self.cursor.execute('''
+            INSERT INTO room(id, hotel_id, availability, category, max_occupancy, rate)
+            VALUES (101, 1, 0, 'Economy', 2, 150);
             ''')
         self.cursor.execute(''' 
-            INSERT INTO room(hotel_id, availability, category, max_occupancy, rate) VALUES (1, 1, 'Economy', 4, 100)
+            INSERT INTO room(id, hotel_id, availability, category, max_occupancy, rate)
+            VALUES (201, 1, 0, 'Executive Suite', 2, 250);
             ''')
         self.cursor.execute(''' 
-            INSERT INTO room(hotel_id, availability, category, max_occupancy, rate) VALUES (2, 1, 'Deluxe', 2, 125)
+            INSERT INTO room(id, hotel_id, availability, category, max_occupancy, rate)
+            VALUES (301, 1, 1, 'Deluxe', 2, 350);
             ''')
-        self.cursor.execute(''' 
-            INSERT INTO room(hotel_id, availability, category, max_occupancy, rate) VALUES (2, 1, 'Economy', 4, 150)
-            ''')
-        self.cursor.execute(''' 
-            INSERT INTO room(hotel_id, availability, category, max_occupancy, rate) VALUES (1, 0, 'Economy', 4, 100)
-            ''')
-        self.cursor.execute(''' 
-            INSERT INTO room(hotel_id, availability, category, max_occupancy, rate) VALUES (2, 0, 'Deluxe', 1, 75)
-            ''')
+
         self.connect.commit()
 
 
     def insert_test_reservation(self):
         self.cursor.execute(''' 
-            INSERT INTO reservation(customer_id, hotel_id, room_id, current_occupancy, check_in, check_out) VALUES (1, 1, 1, 2, '2016-10-08 08:00', '2016-10-16 12:00')
+            INSERT INTO reservation(customer_id, hotel_id, room_id, current_occupancy, check_in, check_out)
+            VALUES (1, 1, 101, 2, '2016-11-12 12:00', '2016-11-16 12:00');
             ''')
         self.cursor.execute(''' 
-            INSERT INTO reservation(customer_id, hotel_id, room_id, current_occupancy, check_in, check_out) VALUES (2, 1, 2, 4, '2016-10-19 09:00', '2016-10-22 13:00')
+            INSERT INTO reservation(customer_id, hotel_id, room_id, current_occupancy, check_in, check_out)
+            VALUES (2, 1, 201, 2, '2016-11-14 12:00', '2016-11-22 12:00');
             ''')
-        self.cursor.execute(''' 
-            INSERT INTO reservation(customer_id, hotel_id, room_id, current_occupancy, check_in, check_out) VALUES (3, 2, 1, 2, '2016-10-16 10:00', '2016-10-23 10:00')
-            ''')
-        self.cursor.execute(''' 
-            INSERT INTO reservation(customer_id, hotel_id, room_id, current_occupancy, check_in, check_out) VALUES (4, 2, 2, 4, '2016-10-20 08:00', '2016-10-24 04:00')
-            ''')
+
         self.connect.commit()
 
+
+    def insert_test_service(self):
+        self.cursor.execute(''' 
+            INSERT INTO service(hotel_id, name, cost) VALUES (1, 'Restaurant Combo 1', 30);
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO service(hotel_id, name, cost) VALUES (1, 'Restaurant Combo 2', 35);
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO service(hotel_id, name, cost) VALUES (1, 'Restaurant Combo 3', 40);
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO service(hotel_id, name, cost) VALUES (1, 'Laundry Deluxe', 15);
+            ''')
+        self.cursor.execute(''' 
+            INSERT INTO service(hotel_id, name, cost) VALUES (1, 'Laundry Standard', 10);
+            ''')
+
+        self.connect.commit()
 
     def insert_test_service_availed(self):
         self.cursor.execute(''' 
-            INSERT INTO service_availed(reservation_id, service_id, staff_id) VALUES (1, 1, 1)
+            INSERT INTO service_availed(reservation_id, service_id, staff_id)
+            VALUES (1, 1, 2);
             ''')
         self.cursor.execute(''' 
-            INSERT INTO service_availed(reservation_id, service_id, staff_id) VALUES (1, 2, 2)
+            INSERT INTO service_availed(reservation_id, service_id, staff_id) 
+            VALUES (1, 2, 2);
             ''')
         self.cursor.execute(''' 
-            INSERT INTO service_availed(reservation_id, service_id, staff_id) VALUES (2, 3, 2)
+            INSERT INTO service_availed(reservation_id, service_id, staff_id)
+            VALUES (2, 4, 3);
             ''')
         self.cursor.execute(''' 
-            INSERT INTO service_availed(reservation_id, service_id, staff_id) VALUES (3, 4, 3)
+            INSERT INTO service_availed(reservation_id, service_id, staff_id)
+            VALUES (2, 3, 2);
             ''')
         self.cursor.execute(''' 
-            INSERT INTO service_availed(reservation_id, service_id, staff_id) VALUES (3, 5, 4)
+            INSERT INTO service_availed(reservation_id, service_id, staff_id)
+            VALUES (2, 4, 3);
             ''')
         self.cursor.execute(''' 
-            INSERT INTO service_availed(reservation_id, service_id, staff_id) VALUES (4, 5, 4)
+            INSERT INTO service_availed(reservation_id, service_id, staff_id)
+            VALUES (2, 5, 3);
             ''')
-        self.connect.commit()
 
+        self.connect.commit()

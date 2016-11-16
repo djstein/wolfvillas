@@ -1,4 +1,3 @@
-import os
 import sys
 from database_queries import Database
 
@@ -8,20 +7,163 @@ def hotel(database, hotel_id):
     command = raw_input("db_mgmt: ").lower()
     while command != 'return':
         command = command.split()
+
         if command[0] == 'customers':
-            database.display_customers()
+            if len(command) == 1:
+                database.display_customers()
+            elif command[1] == 'create':
+                name = raw_input('name: ')
+                gender =  raw_input('gender: ')
+                phone_number = raw_input('phone number: ')
+                address = raw_input('address: ')
+                email = raw_input('email: ')
+                database.create_customer(name, gender, phone_number, address, email)
+
+            elif command[1] == 'update' and len(command) == 3 and command[2].isdigit():
+                name = raw_input('name: ')
+                gender =  raw_input('gender: ')
+                phone_number = raw_input('phone number: ')
+                address = raw_input('address: ')
+                email = raw_input('email: ')
+                database.update_customer(command[2], name, gender, phone_number, address, email)
+
+            elif command[1] == 'delete' and len(command) == 3 and command[2].isdigit():
+                database.delete_customer(command[2])
+
+            else:
+                print("Invalid Input")
+
+        elif command[0] == 'rooms':
+            if len(command) == 1:
+                database.display_rooms()
+
+            elif command[1] == 'available':
+                database.display_available_rooms()
+
+            elif command[1] == 'create':
+                room_number = raw_input('room number: ')
+                category = raw_input('category: ')
+                max_occupancy = raw_input('max occupancy: ')
+                rate = raw_input('rate: ')
+                database.create_room(room_number, hotel_id, 1, category, max_occupancy, rate)
+
+            elif command[1] == 'update' and len(command) == 3 and command[2].isdigit():
+                room_number = raw_input('room number: ')
+                category = raw_input('category: ')
+                max_occupancy = raw_input('max occupancy: ')
+                rate = raw_input('rate: ')
+                database.update_room(room_number, hotel_id, 1, category, max_occupancy, rate)
+
+            elif command[1] == 'release' and len(command) == 3 and command[2].isdigit():
+                database.release_room(command[2])
+
+            elif command[1] == 'delete' and len(command) == 3 and command[2].isdigit():
+                database.delete_room(command[2])
+            
+            else:
+                print("Invalid Input")
+
         elif command[0] == 'reservations':
-            display_reservations(database)
+            if len(command) == 1:
+                database.display_reservations()
+            elif command[1] == 'create':
+                customer_id = raw_input('customer id: ')
+                # Parse customer requests here TODO
+
+            elif command[1] == 'update' and len(command) == 3 and command[2].isdigit():
+                room_id = raw_input('room number: ')
+                current_occupancy = raw_input('current occupancy: ')
+                check_in = raw_input('check in: ')
+                check_out = raw_input('check out: ')
+                database.update_reservation(command[2], room_id, current_occupancy, check_in, check_out)
+
+            elif command[1] == 'delete' and len(command) == 3 and command[2].isdigit():
+                database.delete_reservation(command[2])
+            
+            else:
+                print("Invalid Input")
+
         elif command[0] == 'services':
-            display_services(database)
+            if len(command) == 1:
+                database.display_services()
+            elif command[1] == 'create':
+                name = raw_input('name: ')
+                cost = raw_input('cost: ')
+                database.create_service(hotel_id, name, cost)
+
+            elif command[1] == 'update' and len(command) == 3 and command[2].isdigit():
+                name = raw_input('name: ')
+                cost = raw_input('cost: ')
+                database.update_service(command[2], hotel_id, name, cost)
+
+            elif command[1] == 'delete' and len(command) == 3 and command[2].isdigit():
+                database.delete_service(command[2])
+
+            else:
+                print("Invalid Input")
+
+        elif command[0] == 'services_availed':
+            if len(command) == 1:
+                database.display_services_availed()
+            elif command[1] == 'create':
+                reservation_id = raw_input('reservation ID: ')
+                service_id = raw_input('service ID: ')
+                staff_id = raw_input('staff ID: ')
+                database.create_service_availed(reservation_id, service_id, staff_id)
+
+            elif command[1] == 'update' and len(command) == 3 and command[2].isdigit():
+                reservation_id = raw_input('reservation ID: ')
+                service_id = raw_input('service ID: ')
+                staff_id = raw_input('staff ID: ')
+                database.update_service_availed(command[2], reservation_id, service_id, staff_id)
+
+            elif command[1] == 'delete' and len(command) == 3 and command[2].isdigit():
+                database.delete_service_availed(command[2])
+
+            else:
+                print("Invalid Input")
+
         elif command[0] == 'staff':
-            display_staff(database)
-        elif command[0] == 'help':
+            if len(command) == 1:
+                database.display_staff()
+
+            elif command[1] == 'create':
+                ssn = raw_input('ssn: ')
+                name = raw_input('name: ')
+                age = raw_input('age: ')
+                gender =  raw_input('gender: ')
+                job_title =  raw_input('job title: ')
+                department = raw_input('department: ')
+                phone_number = raw_input('phone number: ')
+                address = raw_input('address: ')
+                database.create_staff(hotel_id, ssn, name, age, gender, job_title, department, phone_number, address)
+
+            elif command[1] == 'update' and len(command) == 3 and command[2].isdigit():
+                ssn = raw_input('ssn: ')
+                name = raw_input('name: ')
+                age = raw_input('age: ')
+                gender =  raw_input('gender: ')
+                job_title =  raw_input('job title: ')
+                department = raw_input('department: ')
+                phone_number = raw_input('phone number: ')
+                address = raw_input('address: ')
+                database.update_staff(command[2], hotel_id, ssn, name, age, gender, job_title, department, phone_number, address)
+
+            elif command[1] == 'delete' and len(command) == 3 and command[2].isdigit():
+                database.delete_staff(command[2])
+
+            else:
+                print("Invalid Input")
+
+        elif command[0] == 'help' and len(command) == 1:
             commands_hotel()
-        elif command[0] == 'quit':
+
+        elif command[0] == 'quit' and len(command) == 1:
             quit(database)
+
         else:
             print("Invalid Input")
+
         command = raw_input("db_mgmt: ").lower()
 
     commands_main()
@@ -44,31 +186,45 @@ def commands_hotel():
     print(
         """
         Commands for customers:
-            customers : display all customers
+            customers: display all customers
             customers create
             customers update [id]
             customers delete [id]
         
         Commands for reservations:
-            reservations : display all reservations for this hotel
+            reservations: display all reservations for this hotel
             reservations create
             reservations update [id]
             reservations delete [id]
+        
+        Commands for rooms
+            rooms: display all rooms for this hotel
+            rooms available: display available rooms in this hotel
+            rooms release [number]: make room available
+            rooms create
+            rooms update [number]
+            rooms delete [number]
 
-        Commands for services availed:
-            services : display all services at this hotel
+        Commands for service types:
+            services: display all services at this hotel
             services create
             services update [id]
             services delete [id]
 
+        Commands for services availed:
+            services_availed: display all services at this hotel
+            services_availed create
+            services_availed update [id]
+            services_availed delete [id]
+
         Commands for staff availed:
-            staff : display all staff at this hotel
+            staff: display all staff at this hotel
             staff create
             staff update [id]
             staff delete [id]
 
         return: to main menu
-        help: accessable commands
+        help: accessible commands
         quit: end the current session"""
     )
 
@@ -82,7 +238,7 @@ def commands_main():
         hotel [id]: begin operations with customers, reservations
             services, and stff
 
-        help: accessable commands
+        help: accessible commands
         quit: end the current session"""
     )
 
@@ -93,16 +249,17 @@ def quit(database):
     sys.exit()
 
 
-# def load_test_data(database):
-#     if database.connect is not None:
-#         database.insert_test_hotel()
-#         database.insert_test_staff()
-#         database.insert_test_customer()
-#         database.insert_test_billing()
-#         database.insert_test_service()
-#         database.insert_test_room()
-#         database.insert_test_reservation()
-#         database.insert_test_service_availed()
+def load_test_data(database):
+    if database.connect is not None:
+        database.delete_database()
+        database.insert_test_hotel()
+        database.insert_test_staff()
+        database.insert_test_customer()
+        database.insert_test_billing()
+        database.insert_test_service()
+        database.insert_test_room()
+        database.insert_test_reservation()
+        database.insert_test_service_availed()
 
 
 if __name__ == '__main__':
@@ -111,17 +268,21 @@ if __name__ == '__main__':
     database = Database()
     database.open_connection()
     database.create_tables()
+    load_test_data(database)
 
     command = raw_input("db_mgmt: ").lower()
     while command != 'quit':
-        if command == 'display hotels':
+        command = command.split()
+        if ' '.join(command) == 'display hotels':
             database.display_hotels()
-        elif command == 'hotel 1':
-            hotel(database, command)
-        elif command == 'help':
+        elif command[0] == 'hotel' and len(command) == 2 and command[1].isdigit():
+            # Check if command[1] is existing hotel id
+            hotel(database, command[1])
+        elif command[0] == 'help':
             commands_main()
         else:
             print("Invalid Input")
+
         command = raw_input("db_mgmt: ").lower()
 
     quit(database)
