@@ -7,8 +7,9 @@ def hotel(database, hotel_id):
     command = raw_input("db_mgmt: ").lower()
     while command != 'return':
         command = command.split()
-
-        if command[0] == 'customers':
+        if len(command) == 0:
+            print ''
+        elif command[0] == 'customers':
             if len(command) == 1:
                 database.display_customers()
             elif command[1] == 'create':
@@ -31,7 +32,7 @@ def hotel(database, hotel_id):
                 database.delete_customer(command[2])
 
             else:
-                print("Invalid Input")
+                print 'Invalid Input'
 
         elif command[0] == 'rooms':
             if len(command) == 1:
@@ -61,14 +62,16 @@ def hotel(database, hotel_id):
                 database.delete_room(command[2])
             
             else:
-                print("Invalid Input")
+                print 'Invalid Input'
 
         elif command[0] == 'reservations':
             if len(command) == 1:
                 database.display_reservations()
             elif command[1] == 'create':
                 customer_id = raw_input('customer id: ')
-                # Parse customer requests here TODO
+                required_occupancy = raw_input('required occupancy: ')
+                category = raw_input('category: ')
+                database.find_room(customer_id, hotel_id, required_occupancy, category)
 
             elif command[1] == 'update' and len(command) == 3 and command[2].isdigit():
                 room_id = raw_input('room number: ')
@@ -81,7 +84,7 @@ def hotel(database, hotel_id):
                 database.delete_reservation(command[2])
             
             else:
-                print("Invalid Input")
+                print 'Invalid Input'
 
         elif command[0] == 'services':
             if len(command) == 1:
@@ -100,7 +103,7 @@ def hotel(database, hotel_id):
                 database.delete_service(command[2])
 
             else:
-                print("Invalid Input")
+                print 'Invalid Input'
 
         elif command[0] == 'services_availed':
             if len(command) == 1:
@@ -121,7 +124,7 @@ def hotel(database, hotel_id):
                 database.delete_service_availed(command[2])
 
             else:
-                print("Invalid Input")
+                print 'Invalid Input'
 
         elif command[0] == 'staff':
             if len(command) == 1:
@@ -153,7 +156,7 @@ def hotel(database, hotel_id):
                 database.delete_staff(command[2])
 
             else:
-                print("Invalid Input")
+                print 'Invalid Input'
 
         elif command[0] == 'help' and len(command) == 1:
             commands_hotel()
@@ -162,7 +165,7 @@ def hotel(database, hotel_id):
             quit(database)
 
         else:
-            print("Invalid Input")
+            print 'Invalid Input'
 
         command = raw_input("db_mgmt: ").lower()
 
@@ -238,6 +241,8 @@ def commands_main():
         hotel [id]: begin operations with customers, reservations
             services, and stff
 
+        load: load test data
+        wipe: delete data
         help: accessible commands
         quit: end the current session"""
     )
@@ -251,7 +256,6 @@ def quit(database):
 
 def load_test_data(database):
     if database.connect is not None:
-        database.delete_database()
         database.insert_test_hotel()
         database.insert_test_staff()
         database.insert_test_customer()
@@ -268,20 +272,25 @@ if __name__ == '__main__':
     database = Database()
     database.open_connection()
     database.create_tables()
-    load_test_data(database)
 
     command = raw_input("db_mgmt: ").lower()
     while command != 'quit':
         command = command.split()
-        if ' '.join(command) == 'display hotels':
+        if len(command) == 0:
+            print ''
+        elif ' '.join(command) == 'display hotels':
             database.display_hotels()
         elif command[0] == 'hotel' and len(command) == 2 and command[1].isdigit():
             # Check if command[1] is existing hotel id
             hotel(database, command[1])
         elif command[0] == 'help':
             commands_main()
+        elif command[0] == 'load':
+            load_test_data(database)
+        elif command[0] == 'wipe':
+            database.delete_database()
         else:
-            print("Invalid Input")
+            print 'Invalid Input'
 
         command = raw_input("db_mgmt: ").lower()
 

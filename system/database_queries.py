@@ -29,17 +29,26 @@ class Database(object):
     def display_hotels(self):
         self.cursor.execute('SELECT * FROM hotel;')
         results = self.cursor.fetchall()
-        print 'Hotel ID, Manager ID, Name, Address, Phone Number'
-        for result in results:
-            print '{0}, {1}, {2}, {3}, {4}'.format(result[0], result[1], result[2], result[3], result[4])
+        if len(results) == 0:
+            print 'No hotels found.'
+        else:
+            print 'Hotel ID, Manager ID, Name, Address, Phone Number'
+            print '-------------------------------------------------'
+            for result in results:
+                print '{0}, {1}, {2}, {3}, {4}'.format(result[0], result[1], result[2], result[3], result[4])
 
 #########################################################
 
     def display_customers(self):
         self.cursor.execute('SELECT * FROM customer;')
         results = self.cursor.fetchall()
-        for result in results:
-            print '{0}, {1}, {2}, {3}, {4}'.format(result[0], result[1], result[2], result[3], result[4])
+        if len(results) == 0:
+            print 'No customers found.'
+        else:
+            print 'Customer ID, Name, Gender, Phone Number, Address, Email'
+            print '-------------------------------------------------------'
+            for result in results:
+                print '{0}, {1}, {2}, {3}, {4}, {5}'.format(result[0], result[1], result[2], result[3], result[4], result[5])
 
 
     def create_customer(self, name, gender, phone_number, address, email):
@@ -68,9 +77,14 @@ class Database(object):
     def display_staff(self):
         self.cursor.execute('SELECT * FROM staff;')
         results = self.cursor.fetchall()
-        for result in results:
-                print '{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}'.format(result[0], result[1], result[2], result[3],
-                                                          result[4], result[5], result[6], result[7], result[8], result[9])
+        if len(results) == 0:
+            print 'No staff found.'
+        else:
+            print 'Staff ID, Hotel ID, Name, Age, Gender, Job Title, Department, Phone Number, Address, Email'
+            print '------------------------------------------------------------------------------------------'
+            for result in results:
+                    print '{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}'.format(result[0], result[1], result[2], result[3],
+                                                              result[4], result[5], result[6], result[7], result[8], result[9])
 
 
     def create_staff(self, hotel_id, ssn, name, age, gender, job_title, department, phone_number, address):
@@ -102,24 +116,63 @@ class Database(object):
     def display_rooms(self):
         self.cursor.execute('SELECT * FROM room;')
         results = self.cursor.fetchall()
-        for result in results:
-            print '{0}, {1}, {2}, {3}, {4}, {5}'.format(
-                    result[0], result[1], result[2], result[3], result[4], result[5])
+        if len(results) == 0:
+            print 'No rooms found.'
+        else:
+            print 'Room Number, Hotel ID, Availability, Category, Max Occupancy, Rate'
+            print '------------------------------------------------------------------'
+            for result in results:
+                print '{0}, {1}, {2}, {3}, {4}, {5}'.format(
+                        result[0], result[1], result[2], result[3], result[4], result[5])
 
 
     def display_available_rooms(self):
         self.cursor.execute('SELECT * FROM room WHERE availability = 1;')
         results = self.cursor.fetchall()
-        for result in results:
-            print '{0}, {1}, {2}, {3}, {4}, {5}'.format(
-                    result[0], result[1], result[2], result[3], result[4], result[5])
+        if len(results) == 0:
+            print 'No available rooms found.'
+        else:
+            for result in results:
+                print '{0}, {1}, {2}, {3}, {4}, {5}'.format(
+                        result[0], result[1], result[2], result[3], result[4], result[5])
+
+    def find_room(self, customer_id, hotel_id, required_occupancy, category):
+        self.cursor.execute('''SELECT * FROM room WHERE availability=1
+                AND hotel_id={0} AND max_occupancy >= {1} AND category='{2}';'''.format(hotel_id, required_occupancy, category))
+        results = self.cursor.fetchall()
+        if len(results) == 0:
+            print 'No available rooms found.'
+        else:
+            rooms = []
+            print 'Room Number, Hotel ID, Availability, Category, Max Occupancy, Rate'
+            print '------------------------------------------------------------------'
+            for result in results:
+                print '{0}, {1}, {2}, {3}, {4}, {5}'.format(
+                        result[0], result[1], result[2], result[3], result[4], result[5])
+                rooms.append(result[0])
+            room_number = int(raw_input('room: '))
+            while room_number not in rooms:
+                print 'invalid room, choose again'
+                room_number = int(raw_input('room: '))
+
+            check_in = raw_input('check in: ')
+            check_out = raw_input('check out: ')
+            self.cursor.execute('''
+                INSERT INTO reservation(customer_id, hotel_id, room_id, current_occupancy, check_in, check_out)
+                VALUES({0}, {1}, {2}, {3}, '{4}', '{5}');'''.format(
+                    customer_id, hotel_id, room_number, required_occupancy, check_in, check_out))
+            self.occupy_room(room_number)
+            self.connect.commit()
+
 
     
     def release_room(self, room_number):
         self.cursor.execute('UPDATE room SET availability = 1 WHERE id={0};'.format(room_number))
         self.connect.commit()
 
-
+    def occupy_room(self, room_number):
+        self.cursor.execute('UPDATE room SET availability = 0 WHERE id={0};'.format(room_number))
+        self.connect.commit()
 
     def create_room(self, room_number, hotel_id, availability, category, max_occupancy, rate):
         self.cursor.execute('''
@@ -148,8 +201,13 @@ class Database(object):
     def display_reservations(self):
         self.cursor.execute('SELECT * FROM reservation;')
         results = self.cursor.fetchall()
-        for result in results:
-            print '{0}, {1}, {2}, {3}, {4}, {5}, {6}'.format(result[0], result[1], result[2], result[3], result[4], result[5], result[6])
+        if len(results) == 0:
+            print 'No reservations found.'
+        else:
+            print 'Reservation Number, Customer ID, Hotel ID, Room Number, Current Occupancy, Check In, Check Out'
+            print '----------------------------------------------------------------------------------------------'
+            for result in results:
+                print '{0}, {1}, {2}, {3}, {4}, {5}, {6}'.format(result[0], result[1], result[2], result[3], result[4], result[5], result[6])
 
 
     def create_reservation(self, customer_id, hotel_id, room_id, current_occupancy,
@@ -179,8 +237,13 @@ class Database(object):
     def display_services(self):
         self.cursor.execute('SELECT * FROM service;')
         results = self.cursor.fetchall()
-        for result in results:
-            print '{0}, {1}, {2}, {3}'.format(result[0], result[1], result[2], result[3]) 
+        if len(results) == 0:
+            print 'No services found.'
+        else:
+            print 'Service ID, Hotel ID, Name, Cost'
+            print '--------------------------------'
+            for result in results:
+                print '{0}, {1}, {2}, {3}'.format(result[0], result[1], result[2], result[3]) 
 
 
     def create_service(self, hotel_id, name, cost):
@@ -207,8 +270,13 @@ class Database(object):
     def display_services_availed(self):
         self.cursor.execute('SELECT * FROM service_availed;')
         results = self.cursor.fetchall()
-        for result in results:
-            print '{0}, {1}, {2}, {3}'.format(result[0], result[1], result[2], result[3]) 
+        if len(results) == 0:
+            print 'No services availed.'
+        else:
+            print 'Services Availed ID, Reservation ID, Service ID, Staff ID'
+            print '---------------------------------------------------------'
+            for result in results:
+                print '{0}, {1}, {2}, {3}'.format(result[0], result[1], result[2], result[3]) 
 
 
     def create_service_availed(self, reservation_id, service_id, staff_id):
